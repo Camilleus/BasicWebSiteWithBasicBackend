@@ -40,7 +40,9 @@ class ClientHandler(http.server.SimpleHTTPRequestHandler):
 
 class SocketServer:
     def __init__(self):
-        pass
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.server.bind(('localhost', 5000))
+        self.storage = {}
     
     def start(self):
         pass
