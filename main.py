@@ -45,6 +45,13 @@ class SocketServer:
         self.storage = {}
     
     def start(self):
-        pass
+        while True:
+            data, addr = self.server.recvfrom(1024)
+            message = json.loads(data.decode())
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+            self.storage[timestamp] = message
+
+            with open('storage/data.json', 'w') as file:
+                json.dump(self.storage, file)
     
     
