@@ -10,7 +10,29 @@
 </head>
 
 <body>
-    <h1>This is the iMessage Page</h1>
+    <h1>This is the Message Page</h1>
+
+    <form id="messageForm">
+        <label for="message">Enter your message:</label>
+        <input type="text" id="message" name="message" required>
+        <button type="button" onclick="sendMessage()">Send Message</button>
+    </form>
+
+    <div id="messageOutput"></div>
+
+    <script>
+        function sendMessage() {
+            // Pobierz wartość z pola input
+            var message = document.getElementById("message").value;
+
+            // Wyświetl wartość na stronie
+            var outputDiv = document.getElementById("messageOutput");
+            outputDiv.innerHTML = "<p>You sent: " + message + "</p>";
+
+            // Opcjonalnie: Zresetuj pole input
+            document.getElementById("messageForm").reset();
+        }
+    </script>
 </body>
 
 </html>
