@@ -7,9 +7,36 @@ from datetime import datetime
 
 PORT = 8000
 
-class MyHandler(http.server.SimpleHTTPRequestHandler):
+class ClientHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
-        pass
+        if self.path == '/message':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            with open('message.html', 'rb') as file:
+                self.wfile.write(file.read())
+        elif self.path == '/error':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            with open('error.html', 'rb') as file:
+                self.wfile.write(file.read())
+        elif self.path == '/styles.css':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/css')
+            self.end_headers()
+            with open('styles.css', 'rb') as file:
+                self.wfile.write(file.read())
+        elif self.path == '/logo.png':
+            self.send_response(200)
+            self.send_header('Content-type', 'image/png')
+            self.end_headers()
+            with open('logo.png', 'rb') as file:
+                self.wfile.write(file.read())
+        else:
+            self.send_response(302)
+            self.send_header('Location', '/error')
+            self.end_headers()
 
 class SocketServer:
     def __init__(self):
