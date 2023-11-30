@@ -5,11 +5,9 @@ import socket
 import json
 from datetime import datetime
 
-PORT = 8000
-
 class ClientHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/message':
+        if self.path == 'message':
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
@@ -21,13 +19,13 @@ class ClientHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             with open('error.html', 'rb') as file:
                 self.wfile.write(file.read())
-        elif self.path == '/styles.css':
+        elif self.path == 'styles.css':
             self.send_response(200)
             self.send_header('Content-type', 'text/css')
             self.end_headers()
             with open('styles.css', 'rb') as file:
                 self.wfile.write(file.read())
-        elif self.path == '/logo.png':
+        elif self.path == 'logo.png':
             self.send_response(200)
             self.send_header('Content-type', 'image/png')
             self.end_headers()
@@ -53,9 +51,14 @@ class SocketServer:
 
             with open('storage/data.json', 'w') as file:
                 json.dump(self.storage, file)
-    
-    
-http_server_thread = threading.Thread(target=http.server.serve_forever, args=(('localhost', 3000), ClientHandler))
+
+def start_http_server():
+    handler = http.server.SimpleHTTPRequestHandler
+    httpd = socketserver.TCPServer(('localhost', 3000), handler)
+    print("HTTP server started on port 3000")
+    httpd.serve_forever()
+
+http_server_thread = threading.Thread(target=start_http_server)
 http_server_thread.start()
 
 socket_server = SocketServer()
