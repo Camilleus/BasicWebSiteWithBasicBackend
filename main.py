@@ -1,67 +1,38 @@
-import http.server
-import socketserver
+from http.server import HTTPServer, BaseHTTPRequestHandler
 import urllib.parse
-import threading
-import socket
-import json
-from datetime import datetime
-import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-
-class ClientHandler(http.server.SimpleHTTPRequestHandler):
+class HttpHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         pr_url = urllib.parse.urlparse(self.path)
         if pr_url.path == '/':
             self.send_html_file('index.html')
-        elif pr_url.path == '/message':
-            self.send_html_file('contact.html')
+        elif pr_url.path == '/contact':
+            self.send_html_file('message.html')
         else:
-            self.send_html_file('error.html', 404)
-            
+            if pathlib.Path().joinpath(pr_url.path[1:]).exists():
+                self.send_static()
+            else:
+                self.send_html_file('error.html', 404)
+
     def send_html_file(self, filename, status=200):
         self.send_response(status)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
         with open(filename, 'rb') as fd:
             self.wfile.write(fd.read())
-        
+
     def do_POST(self):
-        if self.path == '/message':
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length).decode('utf-8')
-
-            logging.info("Received POST data: %s", post_data)
-
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-            self.wfile.write(b'Thank you for your message!')
-
-class SocketServer:
-    def __init__(self):
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.server.bind(('localhost', 5000))
-        self.storage = {}
-    
-    def start(self):
-        logging.info("Socket server started on port 5000")
-        while True:
-            data, addr = self.server.recvfrom(1024)
-            message = json.loads(data.decode())
-            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-            self.storage[timestamp] = message
-
-            with open('storage/data.json', 'w') as file:
-                json.dump(self.storage, file)
-
-def start_http_server():
-    handler = ClientHandler
-    httpd = socketserver.TCPServer(('localhost', 3000), handler)
-    logging.info("HTTP server started on port 3000")
-    httpd.serve_forever()
-
-def run(server_class=SocketServer, handler_class=ClientHandler):
+        data = self.rfile.read(int(self.headers['Content-Length']))
+        print(data)
+        data_parse = urllib.parse.unquote_plus(data.decode())
+        print(data_parse)
+        data_dict = {key: value for key, value in [el.split('=') for el in data_parse.split('&')]}
+        print(data_dict)
+        self.send_response(302)
+        self.send_header('Location', '/')
+        self.end_headers()
+        
+def run(server_class=HTTPServer, handler_class=HttpHandler):
     server_address = ('', 8000)
     http = server_class(server_address, handler_class)
     try:
@@ -84,12 +55,3 @@ def send_static(self):
 if __name__ == '__main__':
     run()
     
-http_server_thread = threading.Thread(target=start_http_server)
-http_server_thread.start()
-
-socket_server = SocketServer()
-socket_server_thread = threading.Thread(target=socket_server.start)
-socket_server_thread.start()
-
-http_server_thread.join()
-socket_server_thread.join()
