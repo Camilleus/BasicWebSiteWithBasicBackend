@@ -55,3 +55,12 @@ class SocketServer:
                 json.dump(self.storage, file)
     
     
+http_server_thread = threading.Thread(target=http.server.serve_forever, args=(('localhost', 3000), ClientHandler))
+http_server_thread.start()
+
+socket_server = SocketServer()
+socket_server_thread = threading.Thread(target=socket_server.start)
+socket_server_thread.start()
+
+http_server_thread.join()
+socket_server_thread.join()
