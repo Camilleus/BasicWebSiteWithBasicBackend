@@ -1,7 +1,17 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
-import urllib.parse
 
-class HttpHandler(BaseHTTPRequestHandler):
+import http
+import http.server
+import urllib.parse
+import pathlib
+import logging
+import socket
+import socketserver
+import threading
+import json
+import datetime
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+class HttpHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         pr_url = urllib.parse.urlparse(self.path)
         if pr_url.path == '/':
@@ -55,3 +65,13 @@ def send_static(self):
 if __name__ == '__main__':
     run()
     
+    
+http_server_thread = threading.Thread(target=start_http_server)
+http_server_thread.start()
+
+socket_server = socketServer()
+socket_server_thread = threading.Thread(target=socket_server.start)
+socket_server_thread.start()
+
+http_server_thread.join()
+socket_server_thread.join()
