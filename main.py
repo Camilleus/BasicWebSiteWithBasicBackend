@@ -3,12 +3,10 @@ import socketserver
 import threading
 import socket
 import json
-import logging
 from datetime import datetime
-
+import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-
 
 class ClientHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -30,7 +28,7 @@ class ClientHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             with open('styles.css', 'rb') as file:
                 self.wfile.write(file.read())
-        elif self.path == '/logo.png':
+        elif self.path == 'logo.png':
             self.send_response(200)
             self.send_header('Content-type', 'image/png')
             self.end_headers()
@@ -52,7 +50,7 @@ class ClientHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             self.wfile.write(b'Thank you for your message!')
-            
+
 class SocketServer:
     def __init__(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -60,6 +58,7 @@ class SocketServer:
         self.storage = {}
     
     def start(self):
+        logging.info("Socket server started on port 5000")
         while True:
             data, addr = self.server.recvfrom(1024)
             message = json.loads(data.decode())
@@ -70,10 +69,12 @@ class SocketServer:
                 json.dump(self.storage, file)
 
 def start_http_server():
-    handler = http.server.SimpleHTTPRequestHandler
+    handler = ClientHandler
     httpd = socketserver.TCPServer(('localhost', 3000), handler)
-    print("HTTP server started on port 3000")
+    logging.info("HTTP server started on port 3000")
     httpd.serve_forever()
+
+
 
 http_server_thread = threading.Thread(target=start_http_server)
 http_server_thread.start()
