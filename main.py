@@ -3,11 +3,16 @@ import socketserver
 import threading
 import socket
 import json
+import logging
 from datetime import datetime
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
 
 class ClientHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/message.html':
+        if self.path == '/message':
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
@@ -36,6 +41,18 @@ class ClientHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header('Location', '/error')
             self.end_headers()
 
+    def do_POST(self):
+        if self.path == '/message':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode('utf-8')
+
+            logging.info("Received POST data: %s", post_data)
+
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(b'Thank you for your message!')
+            
 class SocketServer:
     def __init__(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
