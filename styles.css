@@ -316,23 +316,19 @@ summary {
     --footer-ellipse-color: rgba(255, 255, 255, 0.1);
 }
 
-head {
-    justify-content: center;
-}
-
 body {
     font-family: 'roboto', sans-serif;
-    background-color: var(--white-color);
+    background-color: black;
     color: var(var(--black-color));
     font-size: 16px;
     margin: 0%;
-    justify-content: space-between;
+    text-align: center
 }
 
 button {
     cursor: pointer;
-    color: var(--white-color);
-    background-color: var(--primary-color);
+    color: white;
+    background-color: darkmagenta;
     width: 200px;
     height: 50px;
     border-radius: 4px;
@@ -345,12 +341,34 @@ button {
 }
 
 .messageForm {
+    color: darkmagenta;
     display: flex;
     margin: 40px;
+    text-align: center;
+    font-style: oblique;
+}
+
+form label {
+    color: darkmagenta;
+}
+
+p {
+    color: darkmagenta;
 }
 
 h1 {
-    display: flex;
+    color: darkmagenta;
+    text-align: center;
+}
 
 
+h2 {
+    color: darkmagenta;
+    text-align: center;
+    font-style: oblique;
+}
+
+a {
+    color: darkmagenta;
+    text-decoration: none;
 }
