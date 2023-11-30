@@ -372,3 +372,7 @@ a {
     color: darkmagenta;
     text-decoration: none;
 }
+
+img {
+    position: relative;
+}
