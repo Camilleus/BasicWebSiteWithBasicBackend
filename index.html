@@ -48,4 +48,18 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function sendMessage() {
+            var message = document.getElementById("message").value;
+
+            var outputDiv = document.getElementById("messageOutput");
+            outputDiv.innerHTML = "<p>You sent: " + message + "</p>";
+
+            document.getElementById("messageForm").reset();
+        }
+    </script>
+
+    <h2><a href=message.html>Klik hija to rajt me</a></h2>
+
 </body>
