@@ -7,7 +7,7 @@ from datetime import datetime
 
 class ClientHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path == 'message':
+        if self.path == '/message.html':
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
@@ -19,13 +19,13 @@ class ClientHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             with open('error.html', 'rb') as file:
                 self.wfile.write(file.read())
-        elif self.path == 'styles.css':
+        elif self.path == '/styles.css':
             self.send_response(200)
             self.send_header('Content-type', 'text/css')
             self.end_headers()
             with open('styles.css', 'rb') as file:
                 self.wfile.write(file.read())
-        elif self.path == 'logo.png':
+        elif self.path == '/logo.png':
             self.send_response(200)
             self.send_header('Content-type', 'image/png')
             self.end_headers()
